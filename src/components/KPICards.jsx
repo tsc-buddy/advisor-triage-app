@@ -4,14 +4,17 @@ function fmt(n) {
 
 export default function KPICards({ rows }) {
   const total = rows.length;
-  const highCount = rows.filter(r => r.impact === 'High').length;
-  const secCount = rows.filter(r => r.category === 'Security').length;
-  const uniqueRecs = new Set(rows.map(r => r.recommendation)).size;
 
-  const totalSavings = rows.reduce((sum, r) => {
+  const { highCount, secCount, recSet, totalSavings } = rows.reduce((acc, r) => {
+    if (r.impact === 'High') acc.highCount++;
+    if (r.category === 'Security') acc.secCount++;
+    acc.recSet.add(r.recommendation);
     const v = parseFloat(r.savings);
-    return isNaN(v) ? sum : sum + v;
-  }, 0);
+    if (!isNaN(v)) acc.totalSavings += v;
+    return acc;
+  }, { highCount: 0, secCount: 0, recSet: new Set(), totalSavings: 0 });
+
+  const uniqueRecs = recSet.size;
   const savingsStr = totalSavings > 0 ? '$' + fmt(totalSavings) : '—';
 
   const cards = [

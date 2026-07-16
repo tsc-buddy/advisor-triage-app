@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react';
 import UploadPage from './components/UploadPage';
 import Dashboard from './components/Dashboard';
+import { loadTheme } from './utils/storage';
 
 export default function App() {
   const [rows, setRows] = useState(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem('advisor-theme');
-    const theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const theme = loadTheme();
     document.documentElement.setAttribute('data-theme', theme);
-
-    // rows are not persisted; user re-uploads the CSV each session
   }, []);
 
   if (!rows) return <UploadPage onLoad={setRows} />;

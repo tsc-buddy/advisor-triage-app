@@ -31,6 +31,7 @@ export default function UploadPage({ onLoad }) {
           const existing = loadTriageState();
           saveTriageState({ ...existing, ...triageState });
         }
+        setLoading(false);
         onLoad(rows);
       } catch (err) {
         setError('Failed to parse CSV: ' + err.message);

@@ -8,14 +8,6 @@ const CAT_COLORS = {
   Performance: '#8b5cf6',
 };
 const IMPACT_COLORS = { High: '#dc2626', Medium: '#f59e0b', Low: '#16a34a' };
-const WL_COLORS = {
-  'APIM-PRD': '#0078d4',
-  'GIS-PRD': '#16a34a',
-  'RTIME-PRD': '#f59e0b',
-  'Web-PRD': '#8b5cf6',
-  'DAP-PRD': '#b11f4b',
-  'DIKU-PRD': '#0891b2',
-};
 
 function getThemeColors() {
   const dark = document.documentElement.getAttribute('data-theme') === 'dark';

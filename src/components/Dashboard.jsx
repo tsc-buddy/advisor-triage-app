@@ -5,6 +5,8 @@ import {
   loadBannerDismissed,
   saveBannerDismissed,
   clearData,
+  loadTheme,
+  saveTheme,
 } from '../utils/storage';
 import HowToBanner from './HowToBanner';
 import KPICards from './KPICards';
@@ -35,16 +37,13 @@ function applyFilters(rows, filters) {
 
 export default function Dashboard({ rows, onReset }) {
   const [filters, setFilters] = useState(EMPTY_FILTERS);
-  const [triageState, setTriageState] = useState({});
-  const [bannerDismissed, setBannerDismissed] = useState(false);
-  const [theme, setTheme] = useState('light');
+  const [triageState, setTriageState] = useState(loadTriageState);
+  const [bannerDismissed, setBannerDismissed] = useState(loadBannerDismissed);
+  const [theme, setTheme] = useState(loadTheme);
 
   useEffect(() => {
-    setTriageState(loadTriageState());
-    setBannerDismissed(loadBannerDismissed());
-    const saved = document.documentElement.getAttribute('data-theme');
-    setTheme(saved || 'light');
-  }, []);
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     saveTriageState(triageState);
@@ -54,22 +53,21 @@ export default function Dashboard({ rows, onReset }) {
     setTriageState(prev => ({ ...prev, [rec]: update }));
   }, []);
 
-  function toggleTheme() {
+  const toggleTheme = useCallback(() => {
     const next = theme === 'light' ? 'dark' : 'light';
     setTheme(next);
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('advisor-theme', next);
-  }
+    saveTheme(next);
+  }, [theme]);
 
-  function handleDismissBanner() {
+  const handleDismissBanner = useCallback(() => {
     setBannerDismissed(true);
     saveBannerDismissed(true);
-  }
+  }, []);
 
-  function handleReset() {
+  const handleReset = useCallback(() => {
     clearData();
     onReset();
-  }
+  }, [onReset]);
 
   const filteredRows = applyFilters(rows, filters);
 

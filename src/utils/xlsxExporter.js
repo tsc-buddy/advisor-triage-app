@@ -40,7 +40,7 @@ function buildAllItemsSheet(rows, triageState) {
       row.currency,
       row.retirementDate,
       row.retiringFeature,
-      t.status && t.status !== 'unset' ? t.status : '',
+      t.status && t.status !== 'unset' ? t.status.charAt(0).toUpperCase() + t.status.slice(1) : '',
       t.notes || '',
     ];
   });
@@ -119,7 +119,7 @@ function buildSummarySheet(rows, triageState) {
       resources.length,
       [...subs].join('; '),
       resources.join('; '),
-      t.status && t.status !== 'unset' ? t.status : '',
+      t.status && t.status !== 'unset' ? t.status.charAt(0).toUpperCase() + t.status.slice(1) : '',
       t.notes || '',
     ];
   });

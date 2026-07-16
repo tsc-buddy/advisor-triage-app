@@ -1,15 +1,19 @@
-const WL_CSS_CLASS = {
-  'APIM-PRD': 'wl-apim-prd',
-  'GIS-PRD': 'wl-gis-prd',
-  'RTIME-PRD': 'wl-rtime-prd',
-  'Web-PRD': 'wl-web-prd',
-  'DAP-PRD': 'wl-dap-prd',
-  'DIKU-PRD': 'wl-diku-prd',
-};
+import { useMemo } from 'react';
+
+function workloadCssClass(wl) {
+  // Derives a CSS class from the workload name, e.g. "APIM-PRD" → "wl-apim-prd"
+  return `wl-${wl.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '')}`;
+}
 
 export default function FilterBar({ rows, filters, onFiltersChange }) {
-  const allWorkloads = [...new Set(rows.map(r => r.workload).filter(Boolean))].sort();
-  const allCategories = [...new Set(rows.map(r => r.category).filter(Boolean))].sort();
+  const allWorkloads = useMemo(
+    () => [...new Set(rows.map(r => r.workload).filter(Boolean))].sort(),
+    [rows],
+  );
+  const allCategories = useMemo(
+    () => [...new Set(rows.map(r => r.category).filter(Boolean))].sort(),
+    [rows],
+  );
   const impacts = ['High', 'Medium', 'Low'];
 
   function toggleSet(key, value) {
@@ -28,7 +32,7 @@ export default function FilterBar({ rows, filters, onFiltersChange }) {
       <div className="filters-row">
         <span className="filters-label">Workload</span>
         {allWorkloads.map(wl => {
-          const cssClass = WL_CSS_CLASS[wl] || '';
+          const cssClass = workloadCssClass(wl);
           const active = filters.workloads.has(wl);
           return (
             <button

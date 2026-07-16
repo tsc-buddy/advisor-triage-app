@@ -317,6 +317,11 @@ html[data-theme="dark"] .wl-tag-web   { background: rgba(139,92,246,0.22);  colo
 html[data-theme="dark"] .wl-tag-dap   { background: rgba(253,142,161,0.22); color: #fd8ea1; }
 html[data-theme="dark"] .wl-tag-diku  { background: rgba(8,145,178,0.22);   color: #22d3ee; }
 
+/* Utility classes */
+.impact-inline { display: inline-flex; align-items: center; }
+.text-soft { color: var(--cp-text-soft); }
+.res-chip-more { cursor: help; color: var(--cp-accent); }
+
 /* Badges */
 .badge {
   display: inline-flex; align-items: center;

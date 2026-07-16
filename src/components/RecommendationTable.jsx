@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import { exportToXlsx } from '../utils/xlsxExporter';
 
 const PAGE_SIZE = 30;
@@ -75,29 +75,32 @@ function ByRecView({ rows, triageState, onTriageChange }) {
     setPage(1);
   }
 
-  // Group rows by recommendation
-  const grouped = {};
-  rows.forEach(row => {
-    const key = row.recommendation;
-    if (!grouped[key]) {
-      grouped[key] = {
-        recommendation: key,
-        category: row.category,
-        impact: row.impact,
-        potentialBenefits: row.potentialBenefits,
-        retirementDate: '',
-        retiringFeature: '',
-        resourceNames: [],
-        count: 0,
-      };
-    }
-    grouped[key].count++;
-    if (row.resourceName) grouped[key].resourceNames.push(row.resourceName);
-    if (row.retirementDate && !grouped[key].retirementDate) {
-      grouped[key].retirementDate = row.retirementDate;
-      grouped[key].retiringFeature = row.retiringFeature;
-    }
-  });
+  // Group rows by recommendation — memoised to avoid recomputing on every render
+  const grouped = useMemo(() => {
+    const map = {};
+    rows.forEach(row => {
+      const key = row.recommendation;
+      if (!map[key]) {
+        map[key] = {
+          recommendation: key,
+          category: row.category,
+          impact: row.impact,
+          potentialBenefits: row.potentialBenefits,
+          retirementDate: '',
+          retiringFeature: '',
+          resourceNames: [],
+          count: 0,
+        };
+      }
+      map[key].count++;
+      if (row.resourceName) map[key].resourceNames.push(row.resourceName);
+      if (row.retirementDate && !map[key].retirementDate) {
+        map[key].retirementDate = row.retirementDate;
+        map[key].retiringFeature = row.retiringFeature;
+      }
+    });
+    return map;
+  }, [rows]);
 
   let items = Object.values(grouped);
 
@@ -163,7 +166,7 @@ function ByRecView({ rows, triageState, onTriageChange }) {
                     <span className={`badge ${catBadgeClass(item.category)}`}>{item.category}</span>
                   </td>
                   <td>
-                    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                    <span className="impact-inline">
                       <span className={`impact-dot impact-dot-${(item.impact || '').toLowerCase()}`} />
                       {item.impact}
                     </span>
@@ -173,20 +176,19 @@ function ByRecView({ rows, triageState, onTriageChange }) {
                   <td>
                     {item.retirementDate
                       ? <span className="retire-date">{item.retirementDate}</span>
-                      : <span style={{ color: 'var(--cp-text-soft)' }}>—</span>
+                      : <span className="text-soft">—</span>
                     }
                   </td>
                   <td><div className="retiring-feature-cell">{item.retiringFeature || '—'}</div></td>
                   <td>
                     <div className="res-chips">
-                      {visibleChips.map((name, i) => (
-                        <span key={i} className="res-chip" title={name}>{name}</span>
+                      {visibleChips.map(name => (
+                        <span key={name} className="res-chip" title={name}>{name}</span>
                       ))}
                       {extra > 0 && (
                         <span
-                          className="res-chip"
+                          className="res-chip res-chip-more"
                           title={chips.slice(10).join(', ')}
-                          style={{ cursor: 'help', color: 'var(--cp-accent)' }}
                         >
                           +{extra} more
                         </span>
@@ -252,15 +254,15 @@ function AllItemsView({ rows }) {
             </tr>
           </thead>
           <tbody>
-            {paged.map((row, idx) => (
-              <tr key={idx}>
+            {paged.map((row) => (
+              <tr key={`${row.recommendation}__${row.subscriptionId}__${row.resourceName}`}>
                 <td><div className="rec-cell-text">{row.recommendation}</div></td>
                 <td>{row.workload}</td>
                 <td>
                   <span className={`badge ${catBadgeClass(row.category)}`}>{row.category}</span>
                 </td>
                 <td>
-                  <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  <span className="impact-inline">
                     <span className={`impact-dot impact-dot-${(row.impact || '').toLowerCase()}`} />
                     {row.impact}
                   </span>
@@ -289,6 +291,10 @@ function AllItemsView({ rows }) {
 export default function RecommendationTable({ rows, triageState, onTriageChange }) {
   const [tab, setTab] = useState('byrec');
 
+  const handleExport = useCallback(() => {
+    exportToXlsx(rows, triageState);
+  }, [rows, triageState]);
+
   return (
     <div className="table-section">
       <div className="table-section-header">
@@ -308,7 +314,7 @@ export default function RecommendationTable({ rows, triageState, onTriageChange 
         </div>
         <button
           className="btn btn-accent"
-          onClick={() => exportToXlsx(rows, triageState)}
+          onClick={handleExport}
         >
           ↓ Export Excel
         </button>
