@@ -71,53 +71,54 @@ function buildAllItemsSheet(rows, triageState) {
 }
 
 /**
- * Build the "Summary" sheet — one row per unique recommendation.
- * Resources are collapsed into a count + semicolon-joined list.
+ * Build the "Summary" sheet — one row per unique recommendation + subscription.
+ * Resources within a subscription are collapsed into a count + semicolon-joined list.
  */
 function buildSummarySheet(rows, triageState) {
   const headers = [
     'Category',
     'Business Impact',
     'Recommendation',
+    'Subscription Name',
+    'Subscription ID',
     'Potential Benefits',
     'Annual Savings',
     'Currency',
     'Retirement Date',
     'Retiring Feature',
     'Resource Count',
-    'Affected Subscriptions',
     'Resource Names',
     'Status',
     'Notes',
   ];
 
-  // Group rows by recommendation (preserving first-seen order)
+  // Group rows by recommendation + subscription (preserving first-seen order)
   const order = [];
   const groups = {};
   for (const row of rows) {
-    const key = row.recommendation;
+    const key = `${row.recommendation}__${row.subscriptionId}`;
     if (!groups[key]) {
       order.push(key);
-      groups[key] = { row, resources: [], subs: new Set() };
+      groups[key] = { row, resources: [] };
     }
     if (row.resourceName) groups[key].resources.push(row.resourceName);
-    if (row.subscriptionName) groups[key].subs.add(row.subscriptionName);
   }
 
   const data = order.map(key => {
-    const { row, resources, subs } = groups[key];
-    const t = triageState[key] || {};
+    const { row, resources } = groups[key];
+    const t = triageState[row.recommendation] || {};
     return [
       row.category,
       row.impact,
       row.recommendation,
+      row.subscriptionName,
+      row.subscriptionId,
       row.potentialBenefits,
       row.savings,
       row.currency,
       row.retirementDate,
       row.retiringFeature,
       resources.length,
-      [...subs].join('; '),
       resources.join('; '),
       t.status && t.status !== 'unset' ? t.status.charAt(0).toUpperCase() + t.status.slice(1) : '',
       t.notes || '',
@@ -130,13 +131,14 @@ function buildSummarySheet(rows, triageState) {
     { wch: 18 },  // Category
     { wch: 12 },  // Business Impact
     { wch: 60 },  // Recommendation
+    { wch: 24 },  // Subscription Name
+    { wch: 36 },  // Subscription ID
     { wch: 36 },  // Potential Benefits
     { wch: 14 },  // Annual Savings
     { wch: 10 },  // Currency
     { wch: 16 },  // Retirement Date
     { wch: 36 },  // Retiring Feature
     { wch: 14 },  // Resource Count
-    { wch: 40 },  // Affected Subscriptions
     { wch: 80 },  // Resource Names
     { wch: 12 },  // Status
     { wch: 50 },  // Notes

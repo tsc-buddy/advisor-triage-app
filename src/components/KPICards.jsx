@@ -1,3 +1,6 @@
+import PropTypes from 'prop-types';
+import { rowShape } from '../utils/propTypes';
+
 function fmt(n) {
   return n.toLocaleString('en-NZ', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 }
@@ -62,3 +65,7 @@ export default function KPICards({ rows }) {
     </div>
   );
 }
+
+KPICards.propTypes = {
+  rows: PropTypes.arrayOf(rowShape).isRequired,
+};

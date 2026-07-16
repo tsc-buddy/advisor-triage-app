@@ -1,5 +1,9 @@
 import { useState, useCallback, useRef, useMemo } from 'react';
+import PropTypes from 'prop-types';
 import { exportToXlsx } from '../utils/xlsxExporter';
+import { rowShape, triageEntryShape } from '../utils/propTypes';
+
+const triageStateShape = PropTypes.objectOf(triageEntryShape);
 
 const PAGE_SIZE = 30;
 const IMPACT_ORDER = { High: 3, Medium: 2, Low: 1 };
@@ -24,6 +28,13 @@ function SortTh({ label, field, sort, onSort }) {
     </th>
   );
 }
+
+SortTh.propTypes = {
+  label: PropTypes.string.isRequired,
+  field: PropTypes.string.isRequired,
+  sort: PropTypes.shape({ field: PropTypes.string, dir: PropTypes.string }).isRequired,
+  onSort: PropTypes.func.isRequired,
+};
 
 function Pagination({ page, total, pageSize, onPage }) {
   const totalPages = Math.ceil(total / pageSize);
@@ -58,7 +69,12 @@ function Pagination({ page, total, pageSize, onPage }) {
     </div>
   );
 }
-
+Pagination.propTypes = {
+  page: PropTypes.number.isRequired,
+  total: PropTypes.number.isRequired,
+  pageSize: PropTypes.number.isRequired,
+  onPage: PropTypes.func.isRequired,
+};
 // ── By Recommendation View ──────────────────────────────────────────────────
 
 function ByRecView({ rows, triageState, onTriageChange }) {
@@ -229,7 +245,11 @@ function ByRecView({ rows, triageState, onTriageChange }) {
     </>
   );
 }
-
+ByRecView.propTypes = {
+  rows: PropTypes.arrayOf(rowShape).isRequired,
+  triageState: triageStateShape.isRequired,
+  onTriageChange: PropTypes.func.isRequired,
+};
 // ── All Items View ──────────────────────────────────────────────────────────
 
 function AllItemsView({ rows }) {
@@ -285,7 +305,9 @@ function AllItemsView({ rows }) {
     </>
   );
 }
-
+AllItemsView.propTypes = {
+  rows: PropTypes.arrayOf(rowShape).isRequired,
+};
 // ── Main Component ──────────────────────────────────────────────────────────
 
 export default function RecommendationTable({ rows, triageState, onTriageChange }) {
@@ -328,3 +350,9 @@ export default function RecommendationTable({ rows, triageState, onTriageChange 
     </div>
   );
 }
+
+RecommendationTable.propTypes = {
+  rows: PropTypes.arrayOf(rowShape).isRequired,
+  triageState: triageStateShape.isRequired,
+  onTriageChange: PropTypes.func.isRequired,
+};

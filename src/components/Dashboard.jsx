@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
+import PropTypes from 'prop-types';
+import { rowShape } from '../utils/propTypes';
 import {
   loadTriageState,
   saveTriageState,
@@ -108,3 +110,8 @@ export default function Dashboard({ rows, onReset }) {
     </>
   );
 }
+
+Dashboard.propTypes = {
+  rows: PropTypes.arrayOf(rowShape).isRequired,
+  onReset: PropTypes.func.isRequired,
+};

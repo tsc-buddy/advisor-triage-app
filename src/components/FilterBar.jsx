@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
+import PropTypes from 'prop-types';
 import { workloadColorClass } from '../utils/workloadColor';
+import { rowShape, filtersShape } from '../utils/propTypes';
 
 export default function FilterBar({ rows, filters, onFiltersChange }) {
   const allWorkloads = useMemo(
@@ -83,3 +85,9 @@ export default function FilterBar({ rows, filters, onFiltersChange }) {
     </div>
   );
 }
+
+FilterBar.propTypes = {
+  rows: PropTypes.arrayOf(rowShape).isRequired,
+  filters: filtersShape.isRequired,
+  onFiltersChange: PropTypes.func.isRequired,
+};

@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 export default function HowToBanner({ onDismiss }) {
   const steps = [
     {
@@ -42,3 +44,7 @@ export default function HowToBanner({ onDismiss }) {
     </div>
   );
 }
+
+HowToBanner.propTypes = {
+  onDismiss: PropTypes.func.isRequired,
+};

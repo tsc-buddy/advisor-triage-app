@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import PropTypes from 'prop-types';
 import { parseAdvisorCsv } from '../utils/csvParser';
 import { saveTriageState, loadTriageState } from '../utils/storage';
 
@@ -110,3 +111,7 @@ export default function UploadPage({ onLoad }) {
     </div>
   );
 }
+
+UploadPage.propTypes = {
+  onLoad: PropTypes.func.isRequired,
+};

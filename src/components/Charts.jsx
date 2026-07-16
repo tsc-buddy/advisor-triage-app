@@ -1,4 +1,6 @@
 import { useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
+import { rowShape } from '../utils/propTypes';
 
 const CAT_COLORS = {
   Security: '#dc2626',
@@ -157,3 +159,7 @@ export default function Charts({ rows }) {
     </div>
   );
 }
+
+Charts.propTypes = {
+  rows: PropTypes.arrayOf(rowShape).isRequired,
+};

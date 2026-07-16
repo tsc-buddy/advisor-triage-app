@@ -1,4 +1,6 @@
+import PropTypes from 'prop-types';
 import { workloadColorClass } from '../utils/workloadColor';
+import { rowShape } from '../utils/propTypes';
 
 const IMPACT_ORDER = { High: 3, Medium: 2, Low: 1 };
 
@@ -88,3 +90,6 @@ export default function TopRecs({ rows }) {
     </div>
   );
 }
+TopRecs.propTypes = {
+  rows: PropTypes.arrayOf(rowShape).isRequired,
+};
