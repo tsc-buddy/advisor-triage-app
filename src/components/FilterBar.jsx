@@ -1,9 +1,5 @@
 import { useMemo } from 'react';
-
-function workloadCssClass(wl) {
-  // Derives a CSS class from the workload name, e.g. "APIM-PRD" → "wl-apim-prd"
-  return `wl-${wl.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '')}`;
-}
+import { workloadColorClass } from '../utils/workloadColor';
 
 export default function FilterBar({ rows, filters, onFiltersChange }) {
   const allWorkloads = useMemo(
@@ -32,7 +28,7 @@ export default function FilterBar({ rows, filters, onFiltersChange }) {
       <div className="filters-row">
         <span className="filters-label">Workload</span>
         {allWorkloads.map(wl => {
-          const cssClass = workloadCssClass(wl);
+          const cssClass = workloadColorClass(wl);
           const active = filters.workloads.has(wl);
           return (
             <button

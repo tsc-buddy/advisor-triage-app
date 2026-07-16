@@ -1,13 +1,6 @@
-const IMPACT_ORDER = { High: 3, Medium: 2, Low: 1 };
+import { workloadColorClass } from '../utils/workloadColor';
 
-const WL_TAG_CLASS = {
-  'APIM-PRD': 'wl-tag-apim',
-  'GIS-PRD': 'wl-tag-gis',
-  'RTIME-PRD': 'wl-tag-rtime',
-  'Web-PRD': 'wl-tag-web',
-  'DAP-PRD': 'wl-tag-dap',
-  'DIKU-PRD': 'wl-tag-diku',
-};
+const IMPACT_ORDER = { High: 3, Medium: 2, Low: 1 };
 
 function catBadgeClass(cat) {
   const map = {
@@ -76,7 +69,7 @@ export default function TopRecs({ rows }) {
             <div className="rec-text">{rec.recommendation}</div>
             <div className="wl-tags">
               {[...rec.workloads].sort().map(wl => (
-                <span key={wl} className={`wl-tag ${WL_TAG_CLASS[wl] || ''}`}>{wl}</span>
+                <span key={wl} className={`wl-tag ${workloadColorClass(wl)}`}>{wl}</span>
               ))}
             </div>
             <div className="rec-card-footer">
